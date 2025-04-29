@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product Search Application</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(120deg, #f0f4f8, #c9d6ff);
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 80px auto;
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    button {
+      padding: 12px 25px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      transition: background-color 0.3s;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .logout-btn {
+      margin-top: 10px;
+      text-decoration: none;
+      background: #dc3545;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 8px;
+    }
+
+    .error {
+      color: #d9534f;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .results {
+      margin-top: 40px;
+    }
+
+    .product-card {
+      background: #f8f9fa;
+      border-left: 5px solid #007bff;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+
+    .product-card:hover {
+      transform: scale(1.03);
+    }
+
+    .product-card img {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      margin-bottom: 10px;
+    }
+
+    .links a {
+      margin: 5px;
+      padding: 10px 20px;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+
+    .green-btn {
+      background-color: green;
+      color: white;
+    }
+
+    .black-btn {
+      background-color: black;
+      color: white;
+    }
+  </style>
+  <script>
+    let loggedIn = false;
+    const correctUsername = "admin";
+    const correctPassword = "1234";
+
+    function validateLogin(event) {
+      event.preventDefault();
+      const username = document.querySelector('input[name="username"]').value;
+      const password = document.querySelector('input[name="password"]').value;
+
+      if (username === correctUsername && password === correctPassword) {
+        loggedIn = true;
+        document.getElementById('login-section').style.display = 'none';
+        document.getElementById('search-section').style.display = 'block';
+      } else {
+        document.getElementById('error-msg').textContent = "Invalid username or password. Try admin / 1234";
+      }
+    }
+
+    function performSearch() {
+      const query = document.getElementById('search-query').value.toLowerCase();
+      const resultsContainer = document.getElementById('results-container');
+      resultsContainer.innerHTML = '';
+
+      const sampleProducts = [
+        {
+          name: "Laptop",
+          image: "laptop.jpg",
+          description: "Intel i5 10th Gen, 8GB RAM, 512GB SSD",
+          amazon_link: "https://www.amazon.in/Lenovo-35-56cm-1920x1080-Antiglare-82TSA0CWIH/dp/B0CWRP5P1M/ref=sr_1_5?crid=2LLQQO6B81SRE&dib=eyJ2IjoiMSJ9.KUhbycQg7uEPpIo9e9s54w_pJzEzPs3Y63BscLOSA7uPlh3RAyT7JRaxrVivWmCOdckMYT_We98a3llfrZuakZkIIlUiq1JMU1MZJDdosAPR83qfrl5ff6qkhaa4kZhqTgv_TPSr5_m9-mndVt91dlOFsOj7BXgtwn1Sb1U7wzBv1MO70Gw2FdJIlqOTtrWW5qYpu_8oT-qHM5IYyuv0u8bws0GVlFUHimALm8LaW44.HAjxH_HStZRn0r1_fRyttvlmPQKqSe4nPCm7_TTvG2w&dib_tag=se&keywords=i5+10th+Gen+Laptop&qid=1744872811&sprefix=i5+10th+gen+laptop%2Caps%2C226&sr=8-52",
+          flipkart_link:"https://www.flipkart.com/aroma-nb126-berry-v5-4-upto-60hr-playtime-dual-paring-fast-charging-heavy-bass-bluetooth/p/itm0220a7291d33f?pid=ACCH93VYQKAFWVAE&lid=LSTACCH93VYQKAFWVAEJGLFT4&marketplace=FLIPKART&q=Wireless+Bluetooth+Headphones&store=0pm%2Ffcn%2F821%2Fa7x&srno=s_1_2&otracker=search&otracker1=search&fm=Search&iid=en_SmAeE_-lMbo8upDFwDJzesjRLHm-0po3RCRi7G8KlQWiQGDlK6-a3ymHqcAtMV0fV0o8z5rNeLQfnogsNxJuIQ%3D%3D&ppt=sp&ppn=sp&ssid=5x4cr91g1c0000001744872609862&qH=f2d459a210c97e80",
+          shopsy_link:"https://www.shopsy.in/hp-15s-intel-core-i5-8th-gen-8265u-8-gb-1-tb-hdd-windows-10-home-15s-du0051tu-thin-light-laptop/p/itm3aa6237dc37e5?pid=COMFVNK66WUYBHJP&lid=LSTCOMFVNK66WUYBHJPYJEQHV&marketplace=FLIPKART&q=i5+Gen+Laptop&store=6bo%2Fb5g",
+          highlight: "amazon"
+        },
+        {
+          name: "Headphones",
+          image: "earbud.jpg",
+          description: "Wireless Over-Ear Headphones",
+          amazon_link:"https://www.amazon.in/amazon-basics-Charging-Water-Resistance-Bluetooth/dp/B0D3V6DHTV/ref=sr_1_22_sspa?crid=25REB9COLZD7D&dib=eyJ2IjoiMSJ9.PNVU5OmRyrLgJYy3Cc3JIYMsPfos6J-xVc1s-DNvAykNzZk9aAPwBS92evul4o2eJizb_SMqX4Xe35ydaCt68aJP4SKsBwGLUMG8fkCbz8KtuzARFm7yV2AZQAM7TrfHNbCI0TkzoSyBUK_Pbx5-0YDbrmCOMUf3RzOOPdhA8H3AgfZ_LBozKLj3JFf62AS_EFQUt30MOAgCE4WpNa3KMhQKtlCU9AnHN1NUIDpDXSk.GUBpXuTNqVnF2-_77l7wvCePp2qVWCoE_yDpCicQ6WU&dib_tag=se&keywords=headphones+bluetooth+wireless&qid=1744885008&sprefix=wireless%2Bbluetooth%2Bheadphone%2Caps%2C233&sr=8-22-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9idGY&psc=1",
+          flipkart_link: "https://www.flipkart.com/aroma-nb126-berry-v5-4-upto-60hr-playtime-dual-paring-fast-charging-heavy-bass-bluetooth/p/itm0220a7291d33f?pid=ACCH93VYQKAFWVAE&lid=LSTACCH93VYQKAFWVAEJGLFT4&marketplace=FLIPKART&q=Wireless+Bluetooth+Headphones&store=0pm%2Ffcn%2F821%2Fa7x&srno=s_1_2&otracker=search&otracker1=search&fm=Search&iid=en_SmAeE_-lMbo8upDFwDJzesjRLHm-0po3RCRi7G8KlQWiQGDlK6-a3ymHqcAtMV0fV0o8z5rNeLQfnogsNxJuIQ%3D%3D&ppt=sp&ppn=sp&ssid=5x4cr91g1c0000001744872609862&qH=f2d459a210c97e80",
+          shopsy_link:"https://www.shopsy.in/pro-2nd-generation-2024-latest-version-wireless-bluetooth-earbuds-fast-charging-headset/p/itm7db79c245cf0b?pid=XHOH8QY3ZKXEFHHK&lid=LSTXHOH8QY3ZKXEFHHKYYKZCH&marketplace=FLIPKART&q=bluetooth&store=0pm%2Ffcn&spotlightTagId=default_TrendingId_0pm%2Ffcn",
+          highlight: "shopsy"
+        },
+        {
+          name: "Phone",
+          image: "phone.jpg",
+          description: "SAMSUNG Galaxy S23 FE (Graphite, 128 GB) (8 GB RAM)",
+          amazon_link: "https://www.amazon.in/SAMSUNG-Galaxy-S23-Graphite-Storage/dp/B0CJXQX3MB/ref=sr_1_5?crid=2K90Y7L1GPL2S&dib=eyJ2IjoiMSJ9.9_zoEUQwzD6l6zbkKI-DhrSLvK0luey3CXwmWzVz8hPdqVtvxeLMoi6UaKgIKYjVNzY7mRQv8efR1ud6j2lvqFDiEdtq5tnc8EMSTj_2jQwq-mGgPzjGMGom_hNuuIxm-KrHbQCjDGDXGO-8buf9g-GRB3TkwLsDzKWxQKpBjZ93Vvuw0kuToFpN79Y8fGt-I9Ud5AQSEIe3t9IrB79EtGiXXTYo-RGd9qt9j3drDU8.edIaxDxUHYX8QsTufG2X3Rxp_EuE7ANQbSRzOUOm0ck&dib_tag=se&keywords=galaxy_s23&qid=1744881734&sprefix=galaxy_s23%2Caps%2C192&sr=8-5&th=1",
+          flipkart_link:"https://www.flipkart.com/samsung-galaxy-s23-fe-purple-128-gb/p/itm03da6b42ff68e?pid=MOBGVTA24G7GHE6M&lid=LSTMOBGVTA24G7GHE6MN4I8LB&marketplace=FLIPKART&q=samsung+galaxy+s23&store=tyy%2F4io&srno=s_1_9&otracker=search&otracker1=search&fm=Search&iid=d481ff3a-93a1-4cf1-982f-bdc3c10a5995.MOBGVTA24G7GHE6M.SEARCH&ppt=sp&ppn=sp&ssid=kyz8xgd6ds0000001744885086904&qH=d14f3f2d83fd7f9a",
+          shopsy_link:"https://www.shopsy.in/samsung-galaxy-s23-5g-phantom-black-128-gb/p/itm1f3efe01d1c61?pid=MOBGNPGZVX4PCTTF&lid=LSTMOBGNPGZVX4PCTTFYWYWBL&marketplace=FLIPKART&q=galaxy_s23&store=tyy%2F4io",
+          highlight: "flipkart"
+        },
+        // ---------------want to check the cost of product-------------------------------------------------
+        {
+        name: "Watch",
+        image: "watch.jpg",
+        description: "SWISSTONE Analog Stainless Steel Silver Plated Women's Watch (Pink Dial Silver Colored Strap)",
+        amazon_link:"https://www.amazon.in/SWISSTONE-Analogue-Silver-Plated-Bracelet/dp/B07FCPL5NX/ref=sr_1_12?crid=3OX3L5LDPXV8Q&dib=eyJ2IjoiMSJ9.6xU7uinEve6fPM_hEaDqrVd_MMIcmxuUf8Uej5fLPLkixOrVaZ7g28iGa-riWYbWAZjqqr_Shawrjh1yY9edCvAihEmdQgkqSCELPCAo5y-KxsAJvCTyWVyA3Mtt74Y8vPW8CaLxFvEB8CDuzxjwdIhcHpq1yLY6fR0SUhlceRcZo-Vvgh_-RTH0TDwV8LYGU0wth1-JLFPZfqy6MrdQzEOlQ_sOWfsWGp1WmARZlBYkZhwuckEbXYJsPx76uLv9DgvYZ4jobV8HG8IsJQs3dNpj9G7f0MV2hnYujQlQ8kA.JfMIqUsbx9DHEmY_wrevs1Kr62D1a1DAYkH2Mi68_iU&dib_tag=se&keywords=womens+watch&qid=1744882597&sprefix=womens+watch%2Caps%2C224&sr=8-12",
+        flipkart_link: "https://www.flipkart.com/marclex-queen-magnet-rosegold-girls-watches-women-stylish-branded-new-fashion-latest-design-2021-arrival-21st-century-diamond-studded-luxurious-looking-magnetic-watch-wrist-style-fancy-bracelet-type-ladies-wristwatch-analog-female-clock-gift-mash-strap-golden-luxury-buckle-lady-chain-belt-galaxy-dial-classy-designer-top-trending-model-plated-womens/p/itm36537fde4065f?pid=WATFNWDTEY3VPCQZ&lid=LSTWATFNWDTEY3VPCQZN27MNB&marketplace=FLIPKART&q=womens_watch&store=search.flipkart.com&srno=s_1_14&otracker=search&otracker1=search&fm=Search&iid=0d8e5961-0c18-4d45-883a-6e46165237d2.WATFNWDTEY3VPCQZ.SEARCH&ppt=sp&ppn=sp&ssid=vleeji691s0000001744882509956&qH=145e371b406495b9",
+        shopsy_link:"https://www.shopsy.in/analog-watch-women/p/itm6eb9dae8db021?pid=XWWHAZ59JHCCEXHH&lid=LSTXWWHAZ59JHCCEXHH69CQCU&marketplace=FLIPKART&q=womens+watch&store=r18%2Ff13",
+        highlight: "shopsy"
+    },
+    {
+        name: "Ring",
+        image: "ring.jpeg",
+        description: "Couple Finger Ring Combo",
+        amazon_link:"https://www.amazon.in/MEENAZ-Couple-Solitaire-Adjustable-girlfriend/dp/B08W2D37NS/ref=sr_1_26?crid=2EFN1NABCGVHN&dib=eyJ2IjoiMSJ9.GzTFTgvjFfPdhkWKlfQC9oQErcL3L2OOu1BpknK-F7HoumEoIHzhg_XzLio9p92soDXp2etBFhfm49OedzusqTCrOXCfOLyteUKsUfzWw4PnaaT2BM9smf7WzQtnNSCDMhPULTpmhG-Fy_VE_yzSR6SAxAP1w-xX7yLOGe6VEu5tn9dS4z9Cb-lply8oe_UgA1IvJ7A2DPyk_uk6DpjmqqvqmjA2LHBMb9AVp7T39HanKafHhcrrVg4DOF-l22yMr3Mv0yOzUxu0nRrl63Z0z5-yA3p8jHqY1LlCDQ5yDf8.wTlbk9s-duAvS47oN8XwTveYSU3txdvMGmP3FtmQdjI&dib_tag=se&keywords=ring&qid=1744888125&sprefix=ring%2Caps%2C210&sr=8-26",
+        flipkart_link: "https://www.flipkart.com/alvira-adjustable-couple-combo-lovers-american-diamond-valentine-metal-cubic-zirconia-crystal-silver-rhodium-plated-ring/p/itm2ffcdb87adb2a?pid=RNGGHDWYGEFZJYX3&lid=LSTRNGGHDWYGEFZJYX3P8SIAK&marketplace=FLIPKART&q=ring&store=mcr&srno=s_1_1&otracker=search&otracker1=search&fm=Search&iid=en_MyDU61ElaZ7WKNt9fTc8J4kJgLe3_GcOraV5LBEsXTN6ZSaagCYTI7-NSeVTbFWWqbL6H4UcUSwRpF0xybOYBg%3D%3D&ppt=sp&ppn=sp&ssid=9wmfva80m80000001744888191574&qH=1a5df958e0f29d35",
+        shopsy_link:"https://www.shopsy.in/alloy-ring-set/p/itm91103b6ff88a6?pid=RGNGUAYYYB8GHRWF&lid=LSTRGNGUAYYYB8GHRWFE04VMN&marketplace=FLIPKART&q=ring&store=mcr",
+        highlight: "flipkart"
+    },
+    {
+        name: "Refrigerator",
+        image: "refrigirator.jpeg",
+        description: "Single Door Refrigerator",
+        amazon_link:"https://www.amazon.in/LG-Inverter-Direct-Cool-Refrigerator-GL-D201ABEU/dp/B0041XZS54/ref=sxin_15_pa_sp_search_thematic_sspa?content-id=amzn1.sym.cd33fa60-47cd-49f3-80b8-24b1f0cbef97%3Aamzn1.sym.cd33fa60-47cd-49f3-80b8-24b1f0cbef97&crid=24EFF2YJYHTRR&cv_ct_cx=refrigerator%2Bsamsung%2B5%2Bstar&keywords=refrigerator%2Bsamsung%2B5%2Bstar&nsdOptOutParam=true&pd_rd_i=B0041XZS54&pd_rd_r=50d09646-cd39-4585-a38e-e33027f28bf3&pd_rd_w=DBx0u&pd_rd_wg=xWyNR&pf_rd_p=cd33fa60-47cd-49f3-80b8-24b1f0cbef97&pf_rd_r=SPA0M4G8PG7XTSQAY2EN&qid=1744888523&sbo=RZvfv%2F%2FHxDF%2BO5021pAnSA%3D%3D&sprefix=Refrigerator%2B%2Bsamsung%2B%2Caps%2C228&sr=1-2-ced4eeeb-b190-41d6-902a-1ecb3fb8b7c4-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9zZWFyY2hfdGhlbWF0aWM&th=1",
+        flipkart_link: "https://www.flipkart.com/samsung-183-l-direct-cool-single-door-4-star-refrigerator-base-drawer-digital-inverter/p/itmff9626696387c?pid=RFRGHJPXZBG6Z7XY&lid=LSTRFRGHJPXZBG6Z7XYLWPRXX&marketplace=FLIPKART&q=refrigerator&store=j9e%2Fabm%2Fhzg&spotlightTagId=default_FkPickId_j9e%2Fabm%2Fhzg&srno=s_1_7&otracker=AS_QueryStore_OrganicAutoSuggest_1_3_na_na_na&otracker1=AS_QueryStore_OrganicAutoSuggest_1_3_na_na_na&fm=search-autosuggest&iid=bc8e2fc7-7ac7-433a-99df-d924b021d95c.RFRGHJPXZBG6Z7XY.SEARCH&ppt=sp&ppn=sp&ssid=1guqzy5qn40000001744888555340&qH=945c050322f005b6",
+        shopsy_link:"https://www.shopsy.in/lg-185-l-direct-cool-single-door-5-star-refrigerator-base-drawer-smart-inverter-compressor-connect-fast-ice-making/p/itm78a311e422562?pid=RFRGHMVYGPGABJMF&lid=LSTRFRGHMVYGPGABJMF4TTJNJ&marketplace=FLIPKART&q=refrigerator+samsung+5+star+smart+invertor&store=j9e%2Fabm%2Fhzg",
+        highlight: "flipkart"
+    },
+    {
+        name: "TV",
+        image: "tv.jpeg",
+        description: "LED Smart Android TV ",
+        amazon_link:"https://www.amazon.in/VW-Playwall-Frameless-Android-VW43F2/dp/B0DCZMPRXC/ref=sr_1_4?crid=QDOK4D96FUC6&dib=eyJ2IjoiMSJ9.asdMknzHJtxDO0dsGhvoXVYT8AjskVaIZrS7dXd9nQAHQPIvxxwKNEzFkE5fookqKcXnPE8vRGoJw8B5vcR17Kn7kgoE-O-QXjHxFxfmd__ob2rBK8FrOdHb_joqcyQu_QxuuxjECm6IfaLpvJhmzuwOZIWNi3RwaOqYDPbZexdkeDV8spwg1ubMrP_q3poPQiSro4cJp6k-TA8sxQPeG6v-R6WFxSrEezZ99KQQupUQHECv7_UJPrk_AxbIYp6LLYQ_WdL1kAXSWkfzH_aSSSDd73ooRiWW6cl6JtHo_TE.3Fb__HP28RjSQw4p2TgeOfSr_R737UExjWsiY-n0UXI&dib_tag=se&keywords=led_tv&qid=1745921707&s=electronics&sprefix=led_tv%2Celectronics%2C224&sr=1-4&th=1",
+        flipkart_link: "https://www.flipkart.com/samsung-108-cm-43-inch-full-hd-led-smart-tizen-tv-hdr-purcolor-dolby-digital-plus-hyper-real-picture-engine-triple-protection-smartthings-app-support-key-connect-share-hdd-connectshare-usb-2-0/p/itm45cc248b9b83c?pid=TVSGRS7GYVN3UZNZ&lid=LSTTVSGRS7GYVN3UZNZULGKSS&marketplace=FLIPKART&q=Samsung+108+cm+%2843+inches%29+Full+HD+Smart+LED+TV+UA43T5450AKXXL+%28Black%29&store=ckf%2Fczl&srno=s_1_1&otracker=search&otracker1=search&fm=Search&iid=01207028-dcaf-4998-a28a-76a9f7842950.TVSGRS7GYVN3UZNZ.SEARCH&ppt=pp&ppn=pp&ssid=ougheeq81s0000001745921636578&qH=cd1b48d2cc651",
+        shopsy_link:"https://www.shopsy.in/samsung-108-cm-43-inch-full-hd-led-smart-tizen-tv-hdr-purcolor-dolby-digital-plus-hyper-real-picture-engine-triple-protection-smartthings-app-support-key-connect-share-hdd-connectshare-usb-2-0/p/itm45cc248b9b83c?pid=TVSGRS7GYVN3UZNZ&lid=LSTTVSGRS7GYVN3UZNZULGKSS&marketplace=FLIPKART&q=Samsung+108+cm+%2843+inches%29+Full+HD+Smart+LED+TV+UA43T5450AKXXL+%28Black%29&store=ckf%2Fczl",
+        highlight: "amazon"
+    },
+    {
+        name: "Shirt",
+        image: "shirt.jpeg",
+        description: "Resistant Regular Fit Cotton Formal Shirt ",
+        amazon_link:"https://www.amazon.in/Symbol-Premium-Wrinkle-Resistant-SS23-SMP-FS-01_Dark-Purple_42/dp/B0D7VHWBM5/ref=sr_1_2_sspa?dib=eyJ2IjoiMSJ9.3qX9BHlEGGcy_vcoO4cYjNqq9Tgo9B5yexBd1enwg903If5PmkJLxgxwPlGysuQjdfBrwShr5aEQ-DQeDxOhmSYy651XeiVP3S5E5AmXmlwjtExYnEwsJOyvGHChXMO4CRw2VkPoHfSPk9AvFj82o1anwc73vdlvf7EBiY9AgXn9vVYiLe38nZ-XCk9OLDJU1_sv1otz_7IzaaDQmmMQYz_yvMW9tdusQUe6pKW6yvKIbW2-Ll6T3BI54dtvPnstnE_VVrcQsFmhYai5yi5oPRh6rmOuU-lOE2yzT_g29ck.QVdSuE7N0pGJngFnI3C8X1Rt1Bb1l8ou0ALFCzB85n0&dib_tag=se&keywords=mens%2Bformal%2Bshirt&qid=1744889192&sr=8-2-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&th=1&psc=1",
+        flipkart_link: "https://www.flipkart.com/fubar-men-solid-formal-purple-shirt/p/itm1193d7a3c8bbd?pid=SHTGB79TXZE5Y3FZ&lid=LSTSHTGB79TXZE5Y3FZ5L9EFN&marketplace=FLIPKART&q=Men+Slim+Fit+Solid+Spread+Collar+Formal+Shirt&store=clo%2Fash%2Faxc%2Fmmk&srno=s_1_34&otracker=search&otracker1=search&fm=Search&iid=65ed441a-e1a7-4ed5-978d-cab6a71abd81.SHTGB79TXZE5Y3FZ.SEARCH&ppt=sp&ppn=sp&ssid=zxhr6fc51s0000001745921991626&qH=de2424445adf6662",
+        shopsy_link:"https://www.shopsy.in/men-solid-formal-purple-shirt/p/itm4d885c6eeb1a5?pid=XSRGWHV6DGDY2BYF&lid=LSTXSRGWHV6DGDY2BYFUQVHIR&marketplace=FLIPKART&q=dark+purple+formal+shirt&store=clo%2Fash%2Faxc%2Fmmk",
+        highlight: "flipkart"
+    },
+    {
+        name: "Lehenga",
+        image: "Lehenga.jpeg",
+        description: "Semi-Stitched Lehenga Choli ",
+        amazon_link:"https://www.amazon.in/Tyche-Georgette-Embroidery-Semi-Stitched-Lehenga/dp/B0DW8ZYHZH/ref=sr_1_24?crid=1XSQUYVP2AVSH&dib=eyJ2IjoiMSJ9.6FGj1HmhCh2tSr4O8MHG8-Nm3XdKX_4D94TVqVGNvWYDPvrKtKW3Doa-2yJA5npa0mV_eABDhVt_jrIJFh8t0HxmcFI_tNffLCI4RI0udl7kyaoXR-kiI84NSFmNg6Oy5aU0zcJife6ZOud3OHnKWSEoxsTAYSi3gBkAqYlfQcGK4g6g02Ed0cXRoT7cqY7RVtEcBp_YMSnWWuYvmympeBWVX12eqVO1EdYuGD9T3eeT7UC2LVh4oGYPHYUUzNz7OLvRg2Ni0nk8aYmZnwvLka2vhMBHpPsLFR3zhQm6q88.qZCI4QrJ6Z81DrntTouRb4wybxbjR54ZcKpiW0RD6Fk&dib_tag=se&keywords=womens_lehenga&qid=1744889341&sprefix=womens_lehenga%2Caps%2C237&sr=8-24",
+        flipkart_link: "https://www.flipkart.com/komal-embroidered-semi-stitched-lehenga-choli/p/itm3402485206535?pid=LCHGFYGZH9KMMJQN&lid=LSTLCHGFYGZH9KMMJQN43JBWU&marketplace=FLIPKART&q=womens_lehenga&store=search.flipkart.com&srno=s_2_48&otracker=search&otracker1=search&fm=Search&iid=c7050125-98f4-4266-9c11-123cc7d9cdac.LCHGFYGZH9KMMJQN.SEARCH&ppt=sp&ppn=sp&ssid=6jfsgbjxxs0000001744889455900&qH=7c0865923bd42aa1",
+        shopsy_link:"https://www.shopsy.in/embroidered-semi-stitched-lehenga-choli/p/itm325772e6652bc?pid=SLJHY9MGNH7ESFQA&lid=LSTSLJHY9MGNH7ESFQADH6ADO&marketplace=FLIPKART&q=lehenga+for+women&store=clo%2Fhlg%2Fwrp",
+        highlight: "flipkart"
+    },
+    {
+        name: "Handbag",
+        image: "handbag.jpg",
+        description: "Catlin Handbag Shoulder Hobo Bag Ladies Purse",
+        amazon_link:"https://www.amazon.in/Fostelo-CATLIN-Womens-Handbag-Maroon/dp/B079MD5F7R/ref=sr_1_21_sspa?crid=39TLWC4I3IVNT&dib=eyJ2IjoiMSJ9.wRsb8tsENeZujH0dKR5zbegswqPrwh7qiHQBzUqWevPWapW5WBOpTpQRP26HvBg66MSzRHhbWQr2J3Cr3HzVeO5ulae1NDbtd8x1pGxMvuMFGzVd4cE6abyghZuK7NxDlFX_QqZy9L1VOUTt-Y-wr2z4xEHJwxr0gSp3s1YGWfe5Pv7XgNqzMznUH7vgEqLTWvBWtIaEcL6nU0FlNRyTWvkLEaFrQMSVIaiQSQ_Qn0tO8Z62e8aYSS8Wb6h66Ud04cmMxLco-63hbeEB9EkmwptTTho0MfUCsHp-glMx5ys.V9oCgkU-Nv7sZT4DImVj_YWJfXezU0ucTLSfsNmJoEM&dib_tag=se&keywords=designer_handbag&qid=1744889803&sprefix=designer_handbag%2Caps%2C209&sr=8-21-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9tdGY&th=1",
+        flipkart_link: "https://www.flipkart.com/keegan-tan-hand-held-bag-genuine-leather-textured-designer-handbag-shoulder-messenger-women/p/itm18e7fe9a150a2?pid=SLBGSP8KBU8HG9BN&lid=LSTSLBGSP8KBU8HG9BNLISYLX&marketplace=FLIPKART&q=designer_handbag&store=search.flipkart.com&srno=s_2_55&otracker=search&otracker1=search&fm=Search&iid=f2328c9a-d4e6-4006-839a-65ddb0a166f7.SLBGSP8KBU8HG9BN.SEARCH&ppt=sp&ppn=sp&ssid=kekpnn8sw00000001744889810118&qH=7010831c05449852",
+        shopsy_link:"https://www.shopsy.in/fostelo-women-brown-shoulder-bag/p/itmfe02d0203f524?pid=HMBH82HFH8GFC3V5&lid=LSTHMBH82HFH8GFC3V5BQVTMW&marketplace=FLIPKART&q=Fostelo+Womens+Vegan+Leather+Catlin+Handbag+Shoulder+Hobo+Bag+Ladies+Purse&store=reh%2Fihu",
+        highlight: "amazon"
+    }
+      ];
+
+      const results = sampleProducts.filter(p => p.name.toLowerCase().includes(query));
+
+      results.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+
+        const amazonClass = product.highlight === 'amazon' ? 'green-btn' : 'black-btn';
+        const flipkartClass = product.highlight === 'flipkart' ? 'green-btn' : 'black-btn';
+        const shopsyClass = product.highlight === 'shopsy' ? 'green-btn' : 'black-btn';
+
+        card.innerHTML = `
+          <img src="${product.image}" alt="${product.name}" />
+          <h3>${product.name}</h3>
+          <p>${product.description}</p>
+          <div class="links">
+            <a href="${product.amazon_link}" target="_blank" id="amazon-${product.name.toLowerCase()}" class="${amazonClass}">Amazon</a>
+            <a href="${product.flipkart_link}" target="_blank" id="flipkart-${product.name.toLowerCase()}" class="${flipkartClass}">Flipkart</a>
+            <a href="${product.shopsy_link}" target="_blank" id="shopsy-${product.name.toLowerCase()}" class="${shopsyClass}">Shopsy</a>
+          </div>
+        `;
+        resultsContainer.appendChild(card);
+      });
+    }
+  </script>
+</head>
+<body>
+  <!-- Login Section -->
+  <div class="container" id="login-section">
+    <h2>Login</h2>
+    <p class="error" id="error-msg"></p>
+    <form onsubmit="validateLogin(event)">
+      <input type="text" name="username" placeholder="Username" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <button type="submit">Login</button>
+    </form>
+  </div>
+
+  <!-- Search Section -->
+  <div class="container" id="search-section" style="display: none;">
+    <h2>Search Products</h2>
+    <form onsubmit="event.preventDefault(); performSearch();">
+      <input type="text" id="search-query" placeholder="Enter product name..." required />
+      <button type="submit">Search</button>
+      <a href="#" class="logout-btn" onclick="window.location.reload();">Logout</a>
+    </form>
+    <div class="results" id="results-container"></div>
+  </div>
+</body>
+</html>
